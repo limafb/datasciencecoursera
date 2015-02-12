@@ -1,0 +1,12 @@
+#Write a function named 'pollutantmean' that calculates the mean of a pollutant (sulfate or nitrate) across a specified 
+#list of monitors. The function 'pollutantmean' takes three arguments: 'directory', 'pollutant', and 'id'. Given a vector 
+#monitor ID numbers, 'pollutantmean' reads that monitors' particulate matter data from the directory specified in the 
+#'directory' argument and returns the mean of the pollutant across all of the monitors, ignoring any missing values 
+#coded as NA. 
+
+pollutantmean <- function(directory, pollutant, id = 1:332) {
+  files_list <- dir(directory, full.names=TRUE) #creates a list with the name of all files in the directory        
+  dat_temp <- lapply(files_list[id], read.csv) #creates a list with all files
+  dat <- do.call(rbind, dat_temp) #merge all lists in dat_temp in a dataframe named "dat"                                    
+  mean(dat[, pollutant], na.rm=T) #calculates the mean of the pollutant      
+}
