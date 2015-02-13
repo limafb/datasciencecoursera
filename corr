@@ -1,0 +1,12 @@
+corr <- function(directory, threshold = 0) {
+  tcorr <- function(fname) {
+    dat <- read.csv(file.path(directory, fname))
+    nobs <- sum(complete.cases(dat))
+    if (nobs > threshold) {
+      return (cor(dat$nitrate, dat$sulfate, use="complete.obs"))
+    }
+  }
+  tcorrs <- sapply(list.files(directory), tcorr) #use all correlations + NULLs
+  tcorrs <- unlist(tcorrs[!sapply(tcorrs, is.null)]) #remove NULLs
+  return (tcorrs)
+}  
