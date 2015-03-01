@@ -32,40 +32,24 @@ hist(outcome[, 11])
 
 best <- function(state, outcome) {
     ##Create variables
-    columnID <- "0"
+    columnID <- 0
   
     ## Read outcome data
-    outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
-    colnames(outcome)  <- 1:46
-   
-    
+    dat <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+    colnames(dat)  <- 1:46
+        
     ## Check that state and outcome are valid
-    if(sum(outcome$"7" == state) == 0) {stop("invalid state")} 
-    
-    if (outcome == "heart attack") {
-        columnID <- 13
-    } 
-    else 
-    { 
-        if (outcome == "heart failure"){
-            columnID <- 19
-        }
-    }
-    else 
-    { 
-        if (outcome == "pneumonia") {
-            columnID <- 25
-        }
-    }
-    else
-    {
+    if(sum(dat$"7" == state) == 0) {stop("invalid state")} 
+
+    outcomeMatch <- match(outcome, c("heart attack", "heart failure", "pneumonia"))
+    if (is.na(outcomeMatch)){
         stop("invalid outcome")
     }
-    
+    columnID <- c(13, 19, 25)[outcomeMatch]
+ 
     ## Return hospital name in that state with lowest 30-day death rate
-    columnID <- 25
-    datSub <- subset(outcome, outcome$"7" == state, select = c("2", "7", columnID))
-    datSub[,3] <- as.numeric(datSub[,3])
+    datSub <- subset(dat, dat$"7" == state, select = c("2", "7", columnID))
+    datSub[,3] <- suppressWarnings(as.numeric(datSub[,3]))
     datSort <- datSub[order(datSub[,3], decreasing = F, na.last = T), ]
     hospitalName <- datSort[1,1]
     hospitalName
