@@ -31,25 +31,44 @@ outcome[, 11] <- as.numeric(outcome[, 11])
 hist(outcome[, 11])
 
 best <- function(state, outcome) {
+    ##Create variables
+    columnID <- "0"
+  
     ## Read outcome data
     outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
-      
+    colnames(outcome)  <- 1:46
+   
+    
     ## Check that state and outcome are valid
-    if(sum(outcome[,7] == state) == 0) {
-        stop("invalid state")
+    if(sum(outcome$"7" == state) == 0) {stop("invalid state")} 
+    
+    if (outcome == "heart attack") {
+        columnID <- 13
+    } 
+    else 
+    { 
+        if (outcome == "heart failure"){
+            columnID <- 19
+        }
     }
-    if((!outcome == "heart attack") or (!outcome == "heart failure") or (!outcome == "pneumonia"){
+    else 
+    { 
+        if (outcome == "pneumonia") {
+            columnID <- 25
+        }
+    }
+    else
+    {
         stop("invalid outcome")
     }
     
-    ## Return hospital name in that state with lowest 30-day death
-    
-    if(outcome == "heart attack"){
-        head(as.numeric(outcome[,13]))
-        str(outcome[,13])
-    }
-    
-    ## rate
+    ## Return hospital name in that state with lowest 30-day death rate
+    columnID <- 25
+    datSub <- subset(outcome, outcome$"7" == state, select = c("2", "7", columnID))
+    datSub[,3] <- as.numeric(datSub[,3])
+    datSort <- datSub[order(datSub[,3], decreasing = F, na.last = T), ]
+    hospitalName <- datSort[1,1]
+    hospitalName
 }
 
 #Here is some sample output from the function.
