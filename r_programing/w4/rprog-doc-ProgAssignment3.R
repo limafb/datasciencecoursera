@@ -43,6 +43,7 @@ best <- function(state, outcome) {
     }
     
     ## Return hospital name in that state with lowest 30-day death
+    
     if(outcome == "heart attack"){
         head(as.numeric(outcome[,13]))
         str(outcome[,13])
